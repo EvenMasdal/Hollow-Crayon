@@ -8,11 +8,14 @@ static int q_array_size = (q_number_of_floors * 2) - 2 ;
 static int queue_arr[q_array_size] = {0};
 
 
+/*______________________________________________________________________________________________________________________________________________________*/
+
 //setter etasje og retning i køen
 void q_set_request(int floorDir){
 	queue_arr[floorDir] = 1;
 }
 
+/*______________________________________________________________________________________________________________________________________________________*/
 
 //henter neste 1'er i køen, BØR TENKE PÅ FEIL DERSOM LAST_DIR = 0!!!!!!!
 int q_get_next_floor(int last_floor, int last_dir){
@@ -36,14 +39,23 @@ int q_get_next_floor(int last_floor, int last_dir){
 
 	}
 }
+/*______________________________________________________________________________________________________________________________________________________*/
 
-
-//henter ut neste retning som motor skal bruke
+//henter ut neste retning som motor skal bruke. Heisen vil her stå i ro i en etasje for å finne ut hvilken vei den skal kjøre.
 int q_get_next_direction(int last_floor, int last_dir){
-	//int floor = q_floor_and_dir_to_array_int()
+	int next_floor = q_get_next_floor(last_floor, last_dir);
+	if(last_floor - next_floor > 0){
+		return 1;
+	}
+	else if (last_floor - next_floor< 0){
+		return -1;
+	}
+	else {return 0}; 		//dersom den står i den etasjen  den skal til!!!!!!!!!!!!!
 }
 
 
+
+/*______________________________________________________________________________________________________________________________________________________*/
 
 //Tar inn en int 0-5(etasje og retning)
 
@@ -53,6 +65,8 @@ void q_clear_order(int floorDir){
 }
 
 
+/*______________________________________________________________________________________________________________________________________________________*/
+
 //setter alle element i lista til 0
 void q_clear_queue(){
 	for (element = 0; element < q_array_size ; element = element + 1){
@@ -60,6 +74,8 @@ void q_clear_queue(){
 	}
 }
 
+
+/*______________________________________________________________________________________________________________________________________________________*/
 
 //returnerer array int som samsvarer med floor og dir. Returnerer -1 dersom dir != -1 eller 1.
 int q_floor_and_dir_to_array_int(int floor, int dir){
@@ -82,6 +98,9 @@ int q_floor_and_dir_to_array_int(int floor, int dir){
 			return 3;
 	}
 }
+
+
+/*______________________________________________________________________________________________________________________________________________________*/
 
 int q_array_int_to_floor(int array_int){
 	switch(floor){
