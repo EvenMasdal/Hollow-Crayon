@@ -1,6 +1,6 @@
 
-void timer_start(int time);
+time_t time(time_t *t)
 
-void timer_stop(void);
+void timer_start(int time);
 
 bool timer_get_status(void);
