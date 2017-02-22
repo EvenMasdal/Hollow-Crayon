@@ -19,13 +19,14 @@ void q_set_request(int floorDir){
 /*______________________________________________________________________________________________________________________________________________________*/
 
 //henter neste 1'er i køen, BØR TENKE PÅ FEIL DERSOM LAST_DIR = 0!!!!!!!
+//returnerer array int.
 int q_get_next_floor(int last_floor, int last_dir){
 
 	int arr_i = q_floor_and_dir_to_array_int(last_floor, last_dir);
 	int start_i = q_floor_and_dir_to_array_int(last_floor, last_dir);
 
 	while (true){
-		arr_i = arr_i +1; 			//starter på neste etasje
+		arr_i++; 			//starter på neste etasje
 		if (queue_arr[arr_i] == 1){
 			return arr_i;
 		}
@@ -44,7 +45,11 @@ int q_get_next_floor(int last_floor, int last_dir){
 
 //henter ut neste retning som motor skal bruke. Heisen vil her stå i ro i en etasje for å finne ut hvilken vei den skal kjøre.
 int q_get_next_direction(int last_floor, int last_dir){
-	int next_floor = q_get_next_floor(last_floor, last_dir);
+	int array_int = q_get_next_floor(last_floor, last_dir);
+	//er dette nødvendig?? Kanskje vi bare skal lage logikk for array_int?
+	// evt fiske logikk i q_next_floor til å returnere 0-3
+	int next_floor = q_array_int_to_floor(array_int);
+
 	if(last_floor - next_floor > 0){
 		return 1;
 	}
