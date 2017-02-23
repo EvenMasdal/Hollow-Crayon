@@ -2,25 +2,14 @@
 #include <stdio.h>
 #include <time.h>
 
-static time_t seconds
+static clock_t seconds;
 
 void timer_start(){
-
-  seconds = time(NULL);
-  
-  return(0);
+  clock_t start = clock();
 }
 
 bool timer_get_status(void){
-  return (time(NULL) - seconds) > 3;
-}
-
-main(){
-  timer_start()
-  int b;
-  for(int i = 0; i<10000; i+=1){
-      b = 1 + 1;
-  }
-  timer_get_status();
-  
+  clock_t diff = clock() - start;
+  int msec = diff * 1000 / CLOCKS_PER_SEC;
+  return (msec) > 3000;
 }
