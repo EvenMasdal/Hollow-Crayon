@@ -8,12 +8,11 @@ static int q_array_size = (q_number_of_floors * 2) - 2 ;
 
 static int queue_arr[q_array_size] = {0};
 
-
 /*______________________________________________________________________________________________________________________________________________________*/
 
 //setter etasje og retning i køen
-void q_set_request(int floorDir){
-	queue_arr[floorDir] = 1;
+void q_set_request(int posDir){
+	queue_arr[posDir] = 1;
 }
 
 /*______________________________________________________________________________________________________________________________________________________*/
@@ -22,20 +21,20 @@ void q_set_request(int floorDir){
 //returnerer array int.
 int q_get_next_floor(int last_floor, int last_dir){
 
-	int arr_i = q_floor_and_dir_to_array_int(last_floor, last_dir);
-	int start_i = q_floor_and_dir_to_array_int(last_floor, last_dir);
+	int queue_pos = q_floor_and_dir_to_posDir(last_floor, last_dir); //finner gjeldene posisjon i køsystemet
+	int start_pos = queue_pos;
 
 	while (true){
-		arr_i++; 			//starter på neste etasje
-		if (queue_arr[arr_i] == 1){
-			return arr_i;
+		queue_pos++; 			//starter på neste etasje
+		if (queue_arr[queue_pos] == 1){	//Ser etter en bestilling i etasjen
+			return q_posDir_to_floor(int queue_pos); //returnerer neste etasje i køen
 		}
 
-		if (arr_i =5){
-			arr_i = 0;
+		if (queue_pos == 5){		//starter 
+			queuePos = 0;
 		}
 
-		if (arr_i == start_i){		//stopper loop om den har gått en runde
+		if (queue_pos == start_pos){		//stopper loop om den har gått en runde
 			return -1;
 		}
 
@@ -110,8 +109,8 @@ int q_floor_and_dir_to_array_int(int floor, int dir){
 
 /*______________________________________________________________________________________________________________________________________________________*/
 
-int q_array_int_to_floor(int array_int){
-	switch(floor){
+int q_posDir_to_floor(int posDir){
+	switch(posDir){
 		case 0:
 			return 0;
 		case 1:
