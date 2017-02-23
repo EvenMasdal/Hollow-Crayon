@@ -158,58 +158,23 @@ void ctrl_move(void){
 
 void ctrl_floor_sensor(void){
 	int current_floor_sensor = elev_get_floor_sensor_signal();
-	int next_floor = q_get_next_floor(last_floor, last_dir); 
-	int floor_and_dir;
-
-//FOR-LOOP ISTEDEN??
-//HAR IKKE LAGT INN SKRU AV LYS I KNAPPER
-	switch(current_floor_sensor){
-		case 0:
-			floor_and_dir = q_floor_and_dir_to_array_int(current_floor_sensor, last_dir);
-			if(next_floor == current_floor_and_dir){
-				elev_set_motor_direction(DIRN_STOP);
-				elev_set_indicator(current_floor_sensor);
-				q_clear_order(current_floor_sensor); 			//tar denne inn floor eller array int???????
-				elev_open_door();
-				timer_start(3);
-			}
-			elev_set_indicator(current_floor_sensor);
-			break;
-		case 1:
-			floor_and_dir = q_floor_and_dir_to_array_int(current_floor_sensor, last_dir);
-			if(next_floor == current_floor_and_dir){
-				elev_set_motor_direction(DIRN_STOP);
-				elev_set_indicator(current_floor_sensor);
-				q_clear_order(current_floor_sensor); 			//tar denne inn floor eller array int???????
-				elev_open_door();
-				timer_start(3);
-			}
-			elev_set_indicator(current_floor_sensor);
-			break;
-		case 2:
-			floor_and_dir = q_floor_and_dir_to_array_int(current_floor_sensor, last_dir);
-			if(next_floor == current_floor_and_dir){
-				elev_set_motor_direction(DIRN_STOP);
-				elev_set_indicator(current_floor_sensor);
-				q_clear_order(current_floor_sensor); 			//tar denne inn floor eller array int???????
-				elev_open_door();
-				timer_start(3);
-			}
-			elev_set_indicator(current_floor_sensor);
-			break;
-		case 3:
-			floor_and_dir = q_floor_and_dir_to_array_int(current_floor_sensor, last_dir);
-			if(next_floor == current_floor_and_dir){
-				elev_set_motor_direction(DIRN_STOP);
-				elev_set_indicator(current_floor_sensor);
-				q_clear_order(current_floor_sensor); 			//tar denne inn floor eller array int???????
-				elev_open_door();
-				timer_start(3);
-			}
-			elev_set_indicator(current_floor_sensor);
-			break;
-		default:
-			break;
+	int next_floor_array_int = q_get_next_floor(last_floor, last_dir); 
+	current_floor_and_dir = q_floor_and_dir_to_array_int(current_floor_sensor, last_dir);
+	
+	if(next_floor_array_int == current_floor_and_dir){
+		elev_set_motor_direction(DIRN_STOP);
+		q_clear_order(current_floor_and_dir);		//tar inn array int
+		elev_set_button_lamp(BUTTON_COMMAND, current_floor_sensor, 0);
+		
+		if(current_floor_and_dir = 1 || current_floor_and_dir > 3){
+			elev_set_button_lamp(BUTTON_CALL_UP, current_floor_sensor, 0);
 		}
+		else if(current_floor_and_dir > 1 & current_floor_and_dir < 4){
+			elev_set_button_lamp(BUTTON_CALL_DOWN, current_floor_sensor, 0);
+		}
+		elev_open_door();
+		timer_start(3);
+	}
+	elev_set_indicator(current_floor_sensor);
+	last_floor = current_floor_sensor;
 }
-
