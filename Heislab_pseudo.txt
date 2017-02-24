@@ -1,0 +1,72 @@
+"Main"
+
+
+ctrl_init
+while(1){
+	if(io.getStop() == 1){					#ser om stoppknappen er trykket
+		eventHandler.stop();				#kjører eventen stopp
+	}
+	eventHandler.handle_requests(); 		#Spør io om å oppdatere køen.
+	if(ctrl.moving == 0){
+		eventHandler.move();					#får heisen til å kjøre.
+	}
+	if(io.floor != -1){
+		handle_floor_sensor();				#sjekker om etasjen er riktig, og stopper om nødvendig og setter lastfloor
+	}
+}
+
+
+"EventHandler"
+	eventHandler.stop(){
+		"stopp motor;"
+		moving = 0;
+		queue.clearQueue();
+		while(io.getStop()==1){
+		}
+	}
+	
+	eventHandler.move(){
+		stateMachine.get_floor();				#få gjeldene etasje
+		queue.get_next_dir(floor);				#få neste etasje
+		dir = q_get_dir(IO.); 	#det som står her avhenger av hva som returneres
+		IO.startmotor(dir);
+		last_dir(dir);
+		moving = 1;
+		return;
+	}
+	eventHandler.handle_floor_sensor(){
+		if(io.getfloor() != q_get_next_floor()){
+			break;
+		}
+		moving = 0;
+		lastfloor(io.getfloor(), )
+		IO.stoppmotor();
+		IO.openDoor();
+		timer.timerStart(3);
+		IO.closeDoor();
+	}
+	
+
+
+"IO"
+
+
+
+
+
+
+i = (0-5);
+while(true){
+	if(a[i] == 1){
+		switch(i);
+		case første: i==0;
+			return 0;
+		case andre: i==1 || i == 2
+			return 1;
+		case tredje: i==3 || i == 5
+			return 2;
+		case fjerde: i==4
+			return 3;
+	}
+	i++;
+}
