@@ -8,7 +8,7 @@
 
 int moving;
 static int last_floor; 
-// static int last_dir;
+static int last_dir;
 
 
 void ctrl_init(void){
@@ -21,48 +21,18 @@ void ctrl_init(void){
 		elev_set_motor_direction(DIRN_UP);
 		moving = 1;
 	}
-	
-	int loop = 1;
 
 	while(loop){
 		floor_sensor = elev_get_floor_sensor_signal();
 
-// Sjekker hvilken etg den har truffet. Setter etg.indikator, stopper motor, skriver at heis er i stopp og setter last_floor til den respektive etg.
-		switch(floor_sensor){
-			case 0: 
-				elev_set_floor_indicator(floor_sensor);
-				elev_set_motor_direction(DIRN_STOP);
-				moving = 0;
-				last_floor = floor_sensor;
-				//last_dir = 1;  ???????????????????????
-				loop = 0;
-				break;
-			case 1:
-				elev_set_floor_indicator(floor_sensor);
-				elev_set_motor_direction(DIRN_STOP);
-				moving = 0;
-				last_floor = floor_sensor;
-				//last_dir = 1;  ???????????????????????
-				loop = 0;
-				break;
-			case 2:
-				elev_set_floor_indicator(floor_sensor);
-				elev_set_motor_direction(DIRN_STOP);
-				moving = 0;
-				last_floor = floor_sensor;
-				//last_dir = 1;  ???????????????????????
-				loop = 0;
-				break;
-			case 3:
-				elev_set_floor_indicator(floor_sensor);
-				elev_set_motor_direction(DIRN_STOP);
-				moving = 0;
-				last_floor = floor_sensor;
-				//last_dir = 1;  ???????????????????????
-				loop = 0;
-				break;
-			default: //går ut i loop igjen helt til floor_Sensor gir utslag
-				break;
+	// Sjekker hvilken etg den har truffet. Setter etg.indikator, stopper motor, skriver at heis er i stopp og setter last_floor til den respektive etg.
+		if(floor_sensor != -1){
+			elev_set_floor_indicator(floor_sensor);
+			elev_set_motor_direction(DIRN_STOP);
+			moving = 0;
+			last_floor = floor_sensor;
+			last_dir = 1;
+			break;
 		}
 	}
 }
