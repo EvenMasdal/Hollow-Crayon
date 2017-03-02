@@ -82,25 +82,34 @@ void q_clear_queue(void){
 
 /*______________________________________________________________________________________________________________________________________________________*/
 
-//returnerer array int som samsvarer med floor og dir. Returnerer -1 dersom dir != -1 eller 1.
+//returnerer posDir som samsvarer med floor og dir. Returnerer -1 dersom dir != -1 eller 1.
 int q_floor_and_dir_to_posDir(int floor, int dir){
+	if (dir != 1 || dir !=-1){
+		return -1;
+	}
+
 	switch(floor){ 				//konverterer retning og etasje til arrayint
+		
 		case 0:
-			if (dir != 1 & dir != -1 ){return -1;}
 			return 0;
 
 		case 1: 
-			if (dir == 1){return 1;}
-			else if (dir == -1){return 5;}
-			else {return -1;}
+			if (dir == 1){
+				return 1;
+			}else {
+				return 5;
+			}
 
 		case 2:
-			if (dir == 1){return 2;}
-			else if (dir == -1;){return 4;}
-			else {return -1;}
-		case 3: 
-			if (dir != 1 || dir != ){return -1;}
+			if (dir == 1){
+				return 2;
+			}else {
+				return 4;
+			}
+
+		case 3:
 			return 3;
+		
 		default:
 			return -1;
 	}
