@@ -57,34 +57,33 @@ void ctrl_emergency_stop(void){
 */
 
 void ctrl_requests(void){
-	enum elev_button_type_t button_type;
+	elev_button_type_t button_type;
 	int floor;
-	int button_signal;
-	int array_int;
+	int posDir;
 
-	for(button_type = BUTTON_CALL_UP; button_type =< BUTTON_COMMAND; button_type++){
+	for(button_type = BUTTON_CALL_UP; button_type <= BUTTON_COMMAND; button_type++){
 		for(floor = 0; floor < 4; floor++){
 			switch(button_type){
 				case BUTTON_CALL_UP:
 					if(elev_get_button_signal(button_type, floor) == 1){ 		//hvis trykket. Kanskje & //get_q(floor) !=1 ?
-						array_int = q_floor_and_dir_to_array_int(floor, 1); 	//1 er retning opp
-						q_set_request(array_int);
+						posDir = q_floor_and_dir_to_posDir(floor, 1); 	//1 er retning opp
+						q_set_request(posDir);
 						elev_set_button_lamp(button_type, floor, 1);
 					}
 					break;
 				case BUTTON_CALL_DOWN:
 					if(elev_get_button_signal(button_type, floor) == 1){ 		//hvis trykket. Kanskje & //get_q(floor) !=1 ?
-						array_int = q_floor_and_dir_to_array_int(floor, -1); 	//1 er retning opp
-						q_set_request(array_int);
+						posDir = q_floor_and_dir_to_posDir(floor, -1); 	//1 er retning opp
+						q_set_request(posDir);
 						elev_set_button_lamp(button_type, floor, 1);
 					}
 					break;
 				case BUTTON_COMMAND:
 					if(elev_get_button_signal(button_type, floor) == 1){ 		//hvis trykket. Kanskje & //get_q(floor) !=1 ?
-						array_int = q_floor_and_dir_to_array_int(floor, 1); 	//retning opp
-						q_set_request(array_int);
-						array_int = q_floor_and_dir_to_array_int(floor, -1);	//retning ned
-						q_set_request(array_int);
+						posDir = q_floor_and_dir_to_posDir(floor, 1); 	//retning opp
+						q_set_request(posDir);
+						posDir = q_floor_and_dir_to_posDir(floor, -1);	//retning ned
+						q_set_request(posDir);
 						elev_set_button_lamp(button_type, floor, 1);
 					}
 					break;
@@ -93,13 +92,9 @@ void ctrl_requests(void){
 			}
 		}
 	}
-	
-	q_set_request(floordir);
-	elev_set_button_lamp(button_type, floor, verdi);
-
 }
-
 /*
+
 void ctrl_move(void){
 	int next_dir = q_get_next_dir(last_floor, last_dir);
 
