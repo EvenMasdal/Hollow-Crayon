@@ -25,19 +25,18 @@ int q_get_next_floor(int last_floor, int last_dir){
 	int start_pos = queue_pos;
 
 	while (true){
-		queue_pos++; 			//starter på neste etasje
-		if (queue_arr[queue_pos] == 1){	//Ser etter en bestilling i etasjen
-			return q_posDir_to_floor(int queue_pos); //returnerer neste etasje i køen
+		queue_pos++; 									//starter på neste etasje
+		if (queue_arr[queue_pos] == 1){					//Ser etter en bestilling i etasjen
+			return q_posDir_to_floor(int queue_pos); 	//returnerer neste etasje i køen
 		}
 
-		if (queue_pos == 5){		//starter 
+		if (queue_pos == 5){							//begynner fra starten av arrayet hvis den når slutten 
 			queuePos = 0;
 		}
 
-		if (queue_pos == start_pos){		//stopper loop om den har gått en runde
+		if (queue_pos == start_pos){					//stopper loop om den har gått en runde
 			return -1;
 		}
-
 	}
 }
 /*______________________________________________________________________________________________________________________________________________________*/
