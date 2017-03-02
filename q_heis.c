@@ -4,7 +4,7 @@
 
 static int q_number_of_floors = 4;
 
-static int q_array_size = (q_number_of_floors * 2) - 2 ;
+static int q_array_size = 6 ; 	//endre her?
 
 static int queue_arr[q_array_size] = {0};
 
