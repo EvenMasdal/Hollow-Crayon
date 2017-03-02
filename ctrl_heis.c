@@ -8,7 +8,7 @@
 
 int moving;
 static int last_floor; 
-static int last_dir;
+// static int last_dir;
 
 
 void ctrl_init(void){
@@ -175,6 +175,6 @@ void ctrl_floor_sensor(void){
 		elev_open_door();
 		timer_start(3);
 	}
-	elev_set_floor_indicator(current_floor_sensor);
+	elev_set_indicator(current_floor_sensor);
 	last_floor = current_floor_sensor;
 }*/
