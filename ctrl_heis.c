@@ -30,7 +30,7 @@ void ctrl_init(void){
 // Sjekker hvilken etg den har truffet. Setter etg.indikator, stopper motor, skriver at heis er i stopp og setter last_floor til den respektive etg.
 		switch(floor_sensor){
 			case 0: 
-				elev_set_indicator(floor_sensor);
+				elev_set_floor_indicator(floor_sensor);
 				elev_set_motor_direction(DIRN_STOP);
 				moving = 0;
 				last_floor = floor_sensor;
@@ -38,7 +38,7 @@ void ctrl_init(void){
 				loop = 0;
 				break;
 			case 1:
-				elev_set_indicator(floor_sensor);
+				elev_set_floor_indicator(floor_sensor);
 				elev_set_motor_direction(DIRN_STOP);
 				moving = 0;
 				last_floor = floor_sensor;
@@ -46,7 +46,7 @@ void ctrl_init(void){
 				loop = 0;
 				break;
 			case 2:
-				elev_set_indicator(floor_sensor);
+				elev_set_floor_indicator(floor_sensor);
 				elev_set_motor_direction(DIRN_STOP);
 				moving = 0;
 				last_floor = floor_sensor;
@@ -54,7 +54,7 @@ void ctrl_init(void){
 				loop = 0;
 				break;
 			case 3:
-				elev_set_indicator(floor_sensor);
+				elev_set_floor_indicator(floor_sensor);
 				elev_set_motor_direction(DIRN_STOP);
 				moving = 0;
 				last_floor = floor_sensor;
@@ -175,6 +175,6 @@ void ctrl_floor_sensor(void){
 		elev_open_door();
 		timer_start(3);
 	}
-	elev_set_indicator(current_floor_sensor);
+	elev_set_floor_indicator(current_floor_sensor);
 	last_floor = current_floor_sensor;
 }*/
