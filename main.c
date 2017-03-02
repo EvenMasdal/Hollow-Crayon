@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-typedef enum { false, true } bool;
 
 int main() {
     ctrl_init();

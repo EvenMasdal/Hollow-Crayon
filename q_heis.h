@@ -1,4 +1,3 @@
-typedef enum { false, true } bool;
 
 void q_set_request(int posDir);
 

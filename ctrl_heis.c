@@ -6,7 +6,7 @@
 #include <stdio.h>
 
 
-bool moving;
+int moving;
 static int last_floor; 
 static int last_dir;
 
@@ -19,10 +19,10 @@ void ctrl_init(void){
 
 	if(floor_sensor == -1){
 		elev_set_motor_direction(DIRN_UP);
-		moving = true;
+		moving = 1;
 	}
 	
-	bool loop = true;
+	int loop = 1;
 
 	while(loop){
 		floor_sensor = elev_get_floor_sensor_signal();
@@ -32,34 +32,34 @@ void ctrl_init(void){
 			case 0: 
 				elev_set_indicator(floor_sensor);
 				elev_set_motor_direction(DIRN_STOP);
-				moving = false;
+				moving = 0;
 				last_floor = floor_sensor;
 				//last_dir = 1;  ???????????????????????
-				loop = false;
+				loop = 0;
 				break;
 			case 1:
 				elev_set_indicator(floor_sensor);
 				elev_set_motor_direction(DIRN_STOP);
-				moving = false;
+				moving = 0;
 				last_floor = floor_sensor;
 				//last_dir = 1;  ???????????????????????
-				loop = false;
+				loop = 0;
 				break;
 			case 2:
 				elev_set_indicator(floor_sensor);
 				elev_set_motor_direction(DIRN_STOP);
-				moving = false;
+				moving = 0;
 				last_floor = floor_sensor;
 				//last_dir = 1;  ???????????????????????
-				loop = false;
+				loop = 0;
 				break;
 			case 3:
 				elev_set_indicator(floor_sensor);
 				elev_set_motor_direction(DIRN_STOP);
-				moving = false;
+				moving = 0;
 				last_floor = floor_sensor;
 				//last_dir = 1;  ???????????????????????
-				loop = false;
+				loop = 0;
 				break;
 			default: //går ut i loop igjen helt til floor_Sensor gir utslag
 				break;
@@ -72,9 +72,9 @@ void ctrl_init(void){
 void ctrl_emergency_stop(void){
 	int stop_status = elev_get_stop_signal();
 
-	if(timer_get_status() == false){
+	if(timer_get_status() == 0){
 		elev_set_motor_direction(DIRN_STOP);
-		moving = false;
+		moving = 0;
 		elev_set_stop_lamp(stop_status);
 		if(elev_get_floor_sensor_signal != -1){
 			elev_open_door();
