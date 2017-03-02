@@ -67,7 +67,7 @@ void ctrl_init(void){
 }
 
 
-
+/*
 void ctrl_emergency_stop(void){
 	int stop_status = elev_get_stop_signal();
 
@@ -176,4 +176,4 @@ void ctrl_floor_sensor(void){
 	}
 	elev_set_indicator(current_floor_sensor);
 	last_floor = current_floor_sensor;
-}
+}*/
