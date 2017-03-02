@@ -22,7 +22,7 @@ void ctrl_init(void){
 		moving = 1;
 	}
 
-	while(loop){
+	while(1){
 		floor_sensor = elev_get_floor_sensor_signal();
 
 	// Sjekker hvilken etg den har truffet. Setter etg.indikator, stopper motor, skriver at heis er i stopp og setter last_floor til den respektive etg.
