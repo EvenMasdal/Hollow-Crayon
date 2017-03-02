@@ -44,10 +44,10 @@ int q_get_next_floor(int last_floor, int last_dir){
 
 //henter ut neste retning som motor skal bruke. Heisen vil her stå i ro i en etasje for å finne ut hvilken vei den skal kjøre.
 int q_get_next_direction(int last_floor, int last_dir){
-	int array_int = q_get_next_floor(last_floor, last_dir);
-	//er dette nødvendig?? Kanskje vi bare skal lage logikk for array_int?
+	int posDir = q_get_next_floor(last_floor, last_dir);
+	//er dette nødvendig?? Kanskje vi bare skal lage logikk for posDir?
 	// evt fiske logikk i q_next_floor til å returnere 0-3
-	int next_floor = q_array_int_to_floor(array_int);
+	int next_floor = q_posDir_to_floor(posDir);
 
 	if(last_floor - next_floor > 0){
 		return 1;
@@ -64,8 +64,8 @@ int q_get_next_direction(int last_floor, int last_dir){
 
 //Tar inn en int 0-5(etasje og retning)
 
-void q_clear_order(int floorDir){
-	queue_arr[floorDir] = 0; 
+void q_clear_order(int posDir){
+	queue_arr[posDir] = 0; 
 	
 }
 
@@ -83,7 +83,7 @@ void q_clear_queue(void){
 /*______________________________________________________________________________________________________________________________________________________*/
 
 //returnerer array int som samsvarer med floor og dir. Returnerer -1 dersom dir != -1 eller 1.
-int q_floor_and_dir_to_array_int(int floor, int dir){
+int q_floor_and_dir_to_posDir(int floor, int dir){
 	switch(floor){ 				//konverterer retning og etasje til arrayint
 		case 0:
 			if (dir != 1 & dir != -1 ){return -1;}
