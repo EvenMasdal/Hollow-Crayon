@@ -54,7 +54,7 @@ void ctrl_emergency_stop(void){
 		q_clear_queue();
 	}
 }
-
+*/
 
 void ctrl_requests(void){
 	enum elev_button_type_t button_type;
@@ -99,7 +99,7 @@ void ctrl_requests(void){
 
 }
 
-
+/*
 void ctrl_move(void){
 	int next_dir = q_get_next_dir(last_floor, last_dir);
 
