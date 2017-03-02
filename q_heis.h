@@ -12,7 +12,4 @@ void q_clear_queue(void);
 
 int q_floor_and_dir_to_posDir(int floor, int dir);
 
-int q_posDir_to_floor(int array_int);
-
-//int q_array_int_to_dir(int array_int);
-
+int q_posDir_to_floor(int posDir);

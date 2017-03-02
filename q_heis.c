@@ -25,9 +25,9 @@ int q_get_next_floor(int last_floor, int last_dir){
 	int start_pos = queue_pos;
 
 	while (true){
-		queue_pos++; 									//starter på neste etasje
+		queue_pos++;									//starter på neste etasje
 		if (queue_arr[queue_pos] == 1){					//Ser etter en bestilling i etasjen
-			return q_posDir_to_floor(int queue_pos); 	//returnerer neste etasje i køen
+			return q_posDir_to_floor(int queue_pos);	//returnerer neste etasje i køen
 		}
 
 		if (queue_pos == 5){							//begynner fra starten av arrayet hvis den når slutten 
@@ -43,18 +43,17 @@ int q_get_next_floor(int last_floor, int last_dir){
 
 //henter ut neste retning som motor skal bruke. Heisen vil her stå i ro i en etasje for å finne ut hvilken vei den skal kjøre.
 int q_get_next_direction(int last_floor, int last_dir){
+
 	int posDir = q_get_next_floor(last_floor, last_dir);
-	//er dette nødvendig?? Kanskje vi bare skal lage logikk for posDir?
-	// evt fiske logikk i q_next_floor til å returnere 0-3
 	int next_floor = q_posDir_to_floor(posDir);
 
-	if(last_floor - next_floor > 0){
+	if(last_floor - next_floor > 0){			//gå opp hvis neste etasje er over
 		return 1;
 	}
-	else if (last_floor - next_floor< 0){
+	else if (last_floor - next_floor< 0){		//gå ned hvis neste etasje er under
 		return -1;
 	}
-	else {return 0}; 		//dersom den står i den etasjen  den skal til!!!!!!!!!!!!!
+	else {return 0}; 							//dersom den står i den etasjen  den skal til
 }
 
 
