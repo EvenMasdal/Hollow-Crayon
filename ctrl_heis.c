@@ -2,6 +2,7 @@
 #include "q_heis.h"
 #include "timer_heis.h"
 #include "elev.h"
+#include <stdbool.h>
 #include <stdio.h>
 
 bool moving;

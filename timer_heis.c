@@ -1,6 +1,7 @@
 #include "timer_heis.h"
 #include <stdio.h>
 #include <time.h>
+#include <stdbool.h>
 
 static clock_t seconds;
 

@@ -1,5 +1,6 @@
 #include "q_heis.h"
 #include <stdio.h>
+#include <stdbool.h>
 
 
 static int q_number_of_floors = 4;
