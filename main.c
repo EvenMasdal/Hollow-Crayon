@@ -1,5 +1,5 @@
 #include "elev.h"
-#include "ctrl.h"
+#include "ctrl_heis.h"
 #include <stdio.h>
 
 int main() {
