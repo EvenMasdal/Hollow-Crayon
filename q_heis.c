@@ -5,9 +5,9 @@
 
 //static int q_number_of_floors = 4;
 
-//static int q_array_size = 6 ; 	//endre her?
+int q_array_size = 6 ; 	//static?
 
-static int queue_arr[6] = {0};
+int queue_arr[6] = {0};
 
 /*______________________________________________________________________________________________________________________________________________________*/
 
