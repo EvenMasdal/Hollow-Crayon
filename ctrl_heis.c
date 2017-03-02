@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+
 bool moving;
 static int last_floor; 
 static int last_dir;
@@ -18,7 +19,7 @@ void ctrl_init(void){
 
 	if(floor_sensor == -1){
 		elev_set_motor_direction(DIRN_UP);
-		moving = true
+		moving = true;
 	}
 	
 	bool loop = true;
