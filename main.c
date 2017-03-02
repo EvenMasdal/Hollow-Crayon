@@ -1,6 +1,7 @@
 #include "elev.h"
 #include "ctrl_heis.h"
 #include <stdio.h>
+#include <stdbool.h>
 
 int main() {
     ctrl_init();
