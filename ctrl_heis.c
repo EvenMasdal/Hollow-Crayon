@@ -12,7 +12,6 @@ static int last_dir;
 void ctrl_init(void){
 	q_clear_queue();
 	elev_init();
-	timer_stop();
 
 	int floor_sensor = elev_get_floor_sensor_signal();
 
@@ -25,7 +24,6 @@ void ctrl_init(void){
 
 	while(loop){
 		floor_sensor = elev_get_floor_sensor_signal();
-
 
 // Sjekker hvilken etg den har truffet. Setter etg.indikator, stopper motor, skriver at heis er i stopp og setter last_floor til den respektive etg.
 		switch(floor_sensor){

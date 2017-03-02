@@ -5,7 +5,7 @@
 
 int main() {
     ctrl_init();
-
+/*
     while (1){
         if (elev_get_stop_signal()){
             ctrl_emergency_stop();
@@ -18,4 +18,5 @@ int main() {
             ctrl_floor_sensor();
         }
     }
+*/
 }
