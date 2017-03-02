@@ -3,11 +3,11 @@
 #include <stdbool.h>
 
 
-static int q_number_of_floors = 4;
+//static int q_number_of_floors = 4;
 
-static int q_array_size = 6 ; 	//endre her?
+//static int q_array_size = 6 ; 	//endre her?
 
-static int queue_arr[q_array_size] = {0};
+static int queue_arr[6] = {0};
 
 /*______________________________________________________________________________________________________________________________________________________*/
 
@@ -28,11 +28,11 @@ int q_get_next_floor(int last_floor, int last_dir){
 	while (true){
 		queue_pos++;									//starter på neste etasje
 		if (queue_arr[queue_pos] == 1){					//Ser etter en bestilling i etasjen
-			return q_posDir_to_floor(int queue_pos);	//returnerer neste etasje i køen
+			return q_posDir_to_floor(queue_pos);	//returnerer neste etasje i køen
 		}
 
 		if (queue_pos == 5){							//begynner fra starten av arrayet hvis den når slutten 
-			queuePos = 0;
+			queue_pos = 0;
 		}
 
 		if (queue_pos == start_pos){					//stopper loop om den har gått en runde
@@ -54,7 +54,7 @@ int q_get_next_direction(int last_floor, int last_dir){
 	else if (last_floor - next_floor< 0){		//gå ned hvis neste etasje er under
 		return -1;
 	}
-	else {return 0}; 							//dersom den står i den etasjen  den skal til
+	else {return 0;} 							//dersom den står i den etasjen  den skal til
 }
 
 
@@ -73,7 +73,7 @@ void q_clear_order(int posDir){
 
 //setter alle element i lista til 0
 void q_clear_queue(void){
-	for (element = 0; element < q_array_size ; element = element + 1){
+	for (int element = 0; element < q_array_size ; element = element + 1){
 		queue_arr[element] = 0;
 	}
 }
