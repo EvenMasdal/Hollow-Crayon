@@ -19,25 +19,28 @@ void q_set_request(int posDir){
 /*______________________________________________________________________________________________________________________________________________________*/
 
 //henter neste 1'er i køen, BØR TENKE PÅ FEIL DERSOM LAST_DIR = 0!!!!!!!
-//returnerer array int.
+//returnerer next_floor.
 int q_get_next_floor(int last_floor, int last_dir){
 
-	int queue_pos = q_floor_and_dir_to_posDir(last_floor, last_dir); //finner gjeldene posisjon i køsystemet
-	int start_pos = queue_pos;
+	int start_pos = q_floor_and_dir_to_posDir(last_floor, last_dir); //finner gjeldene posisjon i køsystemet
+	int queue_pos = start_pos;
 
-	while (true){
-		queue_pos++;									//starter på neste etasje
+	while (true){									//starter på neste etasje
+		queue_pos++;
+		if (queue_pos == 6){							//begynner fra starten av arrayet hvis den når slutten 
+			queue_pos = 0;
+		}		
 		if (queue_arr[queue_pos] == 1){					//Ser etter en bestilling i etasjen
 			return q_posDir_to_floor(queue_pos);	//returnerer neste etasje i køen
 		}
-
-		if (queue_pos == 5){							//begynner fra starten av arrayet hvis den når slutten 
-			queue_pos = 0;
-		}
-
 		if (queue_pos == start_pos){					//stopper loop om den har gått en runde
-			return -1;
+			return q_posDir_to_floor(start_pos);
 		}
+		
+		
+		
+
+		
 	}
 }
 /*______________________________________________________________________________________________________________________________________________________*/
@@ -45,16 +48,17 @@ int q_get_next_floor(int last_floor, int last_dir){
 //henter ut neste retning som motor skal bruke. Heisen vil her stå i ro i en etasje for å finne ut hvilken vei den skal kjøre.
 int q_get_next_direction(int last_floor, int last_dir){
 
-	int posDir = q_get_next_floor(last_floor, last_dir);
-	int next_floor = q_posDir_to_floor(posDir);
+	int next_floor = q_get_next_floor(last_floor, last_dir);
 
-	if(last_floor - next_floor > 0){			//gå opp hvis neste etasje er over
+	if(last_floor - next_floor < 0){			//gå opp hvis neste etasje er over
 		return 1;
 	}
-	else if (last_floor - next_floor< 0){		//gå ned hvis neste etasje er under
+	else if (last_floor - next_floor > 0){		//gå ned hvis neste etasje er under
 		return -1;
 	}
-	else {return 0;} 							//dersom den står i den etasjen  den skal til
+	else {
+	    return 0;
+     } 							//dersom den står i den etasjen  den skal til
 }
 
 
@@ -63,9 +67,8 @@ int q_get_next_direction(int last_floor, int last_dir){
 
 //Tar inn en int 0-5(etasje og retning)
 
-void q_clear_order(int posDir){
-	queue_arr[posDir] = 0; 
-	
+void q_clear_floor(int floor){
+	queue_arr[floor] = 0;
 }
 
 
@@ -83,10 +86,9 @@ void q_clear_queue(void){
 
 //returnerer posDir som samsvarer med floor og dir. Returnerer -1 dersom dir != -1 eller 1.
 int q_floor_and_dir_to_posDir(int floor, int dir){
-	if (dir != 1 || dir !=-1){
+	if (dir != 1 && dir !=-1){
 		return -1;
 	}
-
 	switch(floor){ 				//konverterer retning og etasje til arrayint
 		
 		case 0:
