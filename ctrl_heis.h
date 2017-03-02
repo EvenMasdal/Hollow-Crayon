@@ -1,6 +1,8 @@
 
 extern bool moving;
 
+typedef enum { false, true } bool;
+
 void ctrl_init(void);
 
 void ctrl_emergency_stop(void);
