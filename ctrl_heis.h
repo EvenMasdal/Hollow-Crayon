@@ -1,5 +1,5 @@
 
-extern bool moving;
+extern int moving;
 
 void ctrl_init(void);
 
