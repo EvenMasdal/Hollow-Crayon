@@ -107,6 +107,7 @@ void ctrl_move(void){
 		return;
 	}
 	timer_reset();
+	elev_set_door_open_lamp(0);
 	int next_dir = q_get_next_direction(last_floor, last_dir);
 	switch(next_dir){
 		case -1:
@@ -133,11 +134,12 @@ void ctrl_move(void){
 void ctrl_hit_floor(int floor){
 
 	elev_set_floor_indicator(floor);
-	if(floor == q_get_next_floor(last_floor,last_dir) && timer_on == 0){
+	if(floor == q_get_next_floor(last_floor,last_dir) && timer_on == 0 && moving == 1){
 		elev_set_motor_direction(DIRN_STOP);
 		moving = 0;
 		elev_set_button_lamp(BUTTON_COMMAND, floor, 0);
 		timer_start();
+		elev_set_door_open_lamp(1);
 		switch(floor){
 			case 0: 
 				q_clear_floor(0);
@@ -162,6 +164,10 @@ void ctrl_hit_floor(int floor){
 			default:
 				break;
 		}
+
+	}
+	if(timer_on == 0){
+		elev_set_door_open_lamp(0);
 	}
 	last_floor = floor;
 	
