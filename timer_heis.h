@@ -1,3 +1,6 @@
-void timer_start(int time);
+extern int timer_on;
 
-int timer_get_status(void);
+void timer_start(void);
+void timer_reset(void);
+
+double timer_get_status(void);

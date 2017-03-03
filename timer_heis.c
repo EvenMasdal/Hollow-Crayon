@@ -3,14 +3,19 @@
 #include <time.h>
 #include <stdbool.h>
 
-static clock_t seconds;
+static clock_t start;
+int timer_on = 0;
 
-void timer_start(){
-  clock_t start = clock();
+void timer_start(void){
+ 	start = clock();
+	timer_on = 1;
+}
+void timer_reset(void){
+	timer_on = 0;
 }
 
-int timer_get_status(void){
-  clock_t diff = clock() - start;
-  int msec = diff * 1000 / CLOCKS_PER_SEC;
-  return (msec) > 3000;
+double timer_get_status(void){
+ 	clock_t diff = clock()- start;
+  	double time_elapsed = (double)(diff)/CLOCKS_PER_SEC;
+  return time_elapsed;
 }

@@ -4,6 +4,7 @@
 #include "elev.h"
 #include <stdbool.h>
 #include <stdio.h>
+#include <time.h>
 
 
 int moving;
@@ -14,6 +15,7 @@ int last_dir;
 void ctrl_init(void){
 	q_clear_queue();
 	elev_init();
+	timer_reset();
 	
 	int floor_sensor = elev_get_floor_sensor_signal();
 
@@ -101,6 +103,10 @@ void ctrl_requests(void){
 
 
 void ctrl_move(void){
+	if(timer_get_status() < 3.0){
+		return;
+	}
+	timer_reset();
 	int next_dir = q_get_next_direction(last_floor, last_dir);
 	switch(next_dir){
 		case -1:
@@ -127,10 +133,11 @@ void ctrl_move(void){
 void ctrl_hit_floor(int floor){
 
 	elev_set_floor_indicator(floor);
-	if(floor == q_get_next_floor(last_floor,last_dir)){
+	if(floor == q_get_next_floor(last_floor,last_dir) && timer_on == 0){
 		elev_set_motor_direction(DIRN_STOP);
 		moving = 0;
 		elev_set_button_lamp(BUTTON_COMMAND, floor, 0);
+		timer_start();
 		switch(floor){
 			case 0: 
 				q_clear_floor(0);
@@ -159,56 +166,6 @@ void ctrl_hit_floor(int floor){
 	last_floor = floor;
 	
 }
-/*
-
-	int current_floor_sensor = elev_get_floor_sensor_signal();
-	if(current_floor_sensor == -1){
-		return;
-	}
-	int next_floor = q_get_next_floor(last_floor, last_dir);
-	printf("sensor: %d, next floor: %d ", current_floor_sensor + 1, next_floor + 1);
-	
-	elev_set_floor_indicator(current_floor_sensor);
-	last_floor = current_floor_sensor;	
-
-	if(next_floor == current_floor_sensor){
-		elev_set_motor_direction(DIRN_STOP);
-		moving = 0;
-		q_clear_floor(current_floor_sensor);
-		elev_set_button_lamp(BUTTON_COMMAND, current_floor_sensor, 0);
-		switch(current_floor_sensor){
-			case 0: 
-			elev_set_button_lamp(BUTTON_CALL_UP, 0, 0);
-			break;
-			case 1: 
-			elev_set_button_lamp(BUTTON_CALL_UP, 1, 0);
-			elev_set_button_lamp(BUTTON_CALL_DOWN, 1, 0);
-			break;
-			case 2: 
-			elev_set_button_lamp(BUTTON_CALL_UP, 2, 0);
-			elev_set_button_lamp(BUTTON_CALL_DOWN, 2, 0);
-			break;
-			case 3: 
-			elev_set_button_lamp(BUTTON_CALL_DOWN, 3, 0);
-			break;		
-		}
-}}
-
-		if(current_floor_sensor = 1 || current_posDir > 3){
-			elev_set_button_lamp(BUTTON_CALL_UP, current_floor_sensor, 0);
-		}
-		else if(current_floor_and_dir > 1 && current_floor_and_dir < 4){
-			elev_set_button_lamp(BUTTON_CALL_DOWN, current_floor_sensor, 0);
-		}
-
-		elev_open_door();
-		timer_start(3);
-	}
-
-	//printf("Next floor: %d, Last floor: %d, Last dir: %d \n", next_floor, last_floor, last_dir);
-}
-*/
-
 
 
 

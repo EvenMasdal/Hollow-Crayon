@@ -3,6 +3,7 @@ extern int moving;
 extern int last_floor;
 extern int last_dir;
 
+
 void ctrl_init(void);
 
 //void ctrl_emergency_stop(void);
