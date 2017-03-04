@@ -16,25 +16,23 @@ int emergency_stop;		//Sier om heisen holder på å håndtere en nødstopp
 /*_____________________________________________________________________________________________________________________________*/
 
 void ctrl_init(void){
-	q_clear_queue();		//Sletter køen
-	elev_init();			//initialiserer heisen
-	timer_reset();			//resetter timeren
+	q_clear_queue();															//Sletter køen
+	elev_init();																//initialiserer heisen
+	timer_reset();																//resetter timeren
 	
-	int floor_sensor = elev_get_floor_sensor_signal(); //Skaffer etasjeinformasjon
+	int floor_sensor = elev_get_floor_sensor_signal(); 							//Skaffer etasjeinformasjon
 
-	if(floor_sensor == -1){					//Kjører opp om heisen ikke er i en etasje, setter tilstanden moving til 1 og siste retning til opp
-		elev_set_motor_direction(DIRN_UP);
+	if(floor_sensor == -1){														//Kjører opp om heisen ikke er i en etasje, 
+		elev_set_motor_direction(DIRN_UP);										//setter tilstanden moving til 1 og siste retning til opp
 		moving = 1;
 		last_dir = 1;
 	}
 
 	while(1){
-		floor_sensor = elev_get_floor_sensor_signal();
-
-	// Sjekker hvilken etg den har truffet. Setter etg.indikator, stopper motor, skriver at heis er i stopp og setter last_floor til den respektive etg.
-		if(floor_sensor != -1){
-			elev_set_floor_indicator(floor_sensor);
-			elev_set_motor_direction(DIRN_STOP);
+		floor_sensor = elev_get_floor_sensor_signal();							//Oppdaterer floor_sensor en gang per loop for å unngå å
+		if(floor_sensor != -1){													//få forskjellige verdier når loopen kjører
+			elev_set_floor_indicator(floor_sensor);								//Sjekker hvilken etg heisen har truffet. Setter etg.indikator
+			elev_set_motor_direction(DIRN_STOP);								//stopper motor, oppdaterer moving og setter last_floor til den respektive etg.
 			moving = 0;
 			last_floor = floor_sensor;
 			last_dir = 1;
@@ -48,29 +46,29 @@ void ctrl_init(void){
 
 
 void ctrl_emergency_stop(void){
-	//int stop_status = elev_get_stop_signal();
-	
-	elev_set_motor_direction(DIRN_STOP);
-	moving = 0;
-	emergency_stop = 1;
-	timer_reset();
 
-	q_clear_queue();
-	elev_clear_all_lights();
+	elev_set_motor_direction(DIRN_STOP);										//Stopper motoren
+	moving = 0;																	//Setter moving til 0 og emergency stopp til 0
+	emergency_stop = 1;															
+	timer_reset();																//resetter timeren		
+	printf("Nødstopp\n");
 
-	elev_set_stop_lamp(1);
+	q_clear_queue();															//sletter køen
+	elev_clear_all_lights();													//slår av alle knappelys
 
-	if(elev_get_floor_sensor_signal() != -1){
+	elev_set_stop_lamp(1);														//skrur på stopplampa
+
+	if(elev_get_floor_sensor_signal() != -1){									//Åpner døra hvis heisen stoppet i en etasje
 		elev_set_door_open_lamp(1);
-		last_floor = elev_get_floor_sensor_signal();
+		last_floor = elev_get_floor_sensor_signal();							//Oppdaterer last floor
 	}
-	while(elev_get_stop_signal()){
+	while(elev_get_stop_signal()){												//venter på at bruker skal slippe stoppknapp
 
 	}
-	if(elev_get_floor_sensor_signal() != -1){
-		timer_start();
+	if(elev_get_floor_sensor_signal() != -1){									//starter dørtimeren hvis brukeren slipper stoppknappen
+		timer_start();															//i en etasje
 	}
-	elev_set_stop_lamp(0);
+	elev_set_stop_lamp(0);														//skrur av stopplampen
 
 }
 
@@ -83,16 +81,20 @@ void ctrl_requests(void){
 
 	for(button_type = BUTTON_CALL_UP; button_type <= BUTTON_COMMAND; button_type++){		//itererer gjennom knappetypene
 		for(int floor = 0; floor < 4; floor++){												//itererer gjennom etasjene
-			if(!((button_type == BUTTON_CALL_UP && floor == 3) || (button_type == BUTTON_CALL_DOWN && floor == 0))){	//hopper over knapper som ikke finnes opp i 4. og ned i 1.
+			if(!((button_type == BUTTON_CALL_UP && floor == 3) || (button_type == BUTTON_CALL_DOWN && floor == 0))){
+																				//hopper over knapper som ikke finnes. Det er opp i 4. og ned i 1. etasje
 				if(elev_get_button_signal(button_type, floor) == 1){			//Sjekker om knappen er trykket
-					elev_set_button_lamp(button_type, floor, 1);				//Skrur lyset på
+					elev_set_button_lamp(button_type, floor, 1);				//Skrur lyset på i gjeldene knapp på
+
 					if(button_type == BUTTON_CALL_DOWN){						//Sjekker om en av nedknappene har blitt trykket.
-						q_set_request(q_floor_and_dir_to_posDir(floor, -1));	//Setter en request i køen med riktig etasje og retning ned
-					}else if(button_type == BUTTON_CALL_UP){
-						q_set_request(q_floor_and_dir_to_posDir(floor, 1));		//Setter en request i køen med riktig etasje og retning opp
-					}else{
-						q_set_request(q_floor_and_dir_to_posDir(floor, 1));		//Setter en request i riktig etasje for både opp og ned. På den måten
-						q_set_request(q_floor_and_dir_to_posDir(floor, -1));	//Stopper heisen alltid for å slippe folk av i riktig etasje.
+						q_set_request(q_floor_and_dir_to_posDir(floor, -1));	//Setter en request i køen med etasje "floor" og retning ned
+					}
+					else if(button_type == BUTTON_CALL_UP){
+						q_set_request(q_floor_and_dir_to_posDir(floor, 1));		//Setter en request i køen med etasje "floor" og retning opp
+					}
+					else{
+						q_set_request(q_floor_and_dir_to_posDir(floor, 1));		//Setter en request i etase "floor" for både opp og ned. På den måten
+						q_set_request(q_floor_and_dir_to_posDir(floor, -1));	//Stopper heisen alltid for å slippe folk av uavhengig av retning.
 					}
 				}
 			}
@@ -105,74 +107,80 @@ void ctrl_requests(void){
 
 
 void ctrl_move(void){
-	if(timer_get_status() < 3.0){
+
+	int next_floor = q_get_next_floor(last_floor, last_dir);					//Ber køen om neste etasje
+	
+	if(next_floor == -1){														//returnerer hvis neste etasje er gjeldene etasje
 		return;
 	}
 
-	timer_reset();
-	elev_set_door_open_lamp(0);
-
-	int next_floor = q_get_next_floor(last_floor, last_dir);
+	printf("Kjører fra %d. til %d.\n", last_floor +1 , next_floor+1 );			//Printer i Terminal
 	
-	if(next_floor == -1){
-		return;
-	}
-
-	printf("Moving from %d to %d\n", last_floor, next_floor);
-	
-	if(emergency_stop == 1 && next_floor == last_floor){
-		printf("Nødstopphendelse\n");
-		elev_set_motor_direction(-last_dir);
-		emergency_stop = 0;
+	if(emergency_stop == 1 && next_floor == last_floor){						//Hvis det har vært en nødstopp og heisen tror at den allerede er i 
+		elev_set_motor_direction(-last_dir);									//neste etasje i køen vil den kjøre tilbake dit den kom fra for å 
+		emergency_stop = 0;														//komme til riktig etasje
+		moving = 1;																//Setter tilstanden moving til 1.
+		last_dir = -last_dir;
 	}else{
-		last_dir = q_get_next_direction(last_floor,last_dir);
-		elev_set_motor_direction(last_dir);
-	}
-	moving = 1;
-}
-
-void ctrl_hit_floor(int floor){
-
-	elev_set_floor_indicator(floor);
-
-	if(floor == q_get_next_floor(last_floor,last_dir) && timer_on == 0 && door_status == 0){
-		elev_set_motor_direction(DIRN_STOP);
-		moving = 0;
-		door_status = 1;
-		timer_start();
-		elev_set_door_open_lamp(1);
-	}
-	if(floor == q_get_next_floor(last_floor,last_dir) && door_status == 1){
-		elev_set_button_lamp(BUTTON_COMMAND, floor, 0);
-		switch(floor){
-			case 0: 
-				q_clear_floor(0);
-				elev_set_button_lamp(BUTTON_CALL_UP, 0, 0);
-				break;
-			case 1: 
-				q_clear_floor(1);
-				q_clear_floor(5);
-				elev_set_button_lamp(BUTTON_CALL_UP, 1, 0);
-				elev_set_button_lamp(BUTTON_CALL_DOWN, 1, 0);
-				break;
-			case 2: 
-				q_clear_floor(2);
-				q_clear_floor(4);
-				elev_set_button_lamp(BUTTON_CALL_UP, 2, 0);
-				elev_set_button_lamp(BUTTON_CALL_DOWN, 2, 0);
-				break;
-			case 3: 
-				q_clear_floor(3);
-				elev_set_button_lamp(BUTTON_CALL_DOWN, 3, 0);
-				break;
-			default:
-				break;
+		int next_dir = q_get_next_direction(last_floor,last_dir);				//Hvis tilfellet over ikke har intruffet skal heisen kjøre som normalt.
+		elev_set_motor_direction(next_dir);										//Den henter neste retning fra køen og oppdaterer moving og last direction.
+		if(next_dir != 0){														//Usikker på om det er nødvendig med if, er for lost.
+			moving = 1;
+			last_dir = next_dir;
 		}
 	}
-	if(timer_get_status() > 3.0){
-		timer_reset();
-		elev_set_door_open_lamp(0);
-		door_status = 0;
+}
+
+void ctrl_hit_floor(int floor){													//Håndterer at heisen har kommet til en etasje
+
+	elev_set_floor_indicator(floor);											//Setter etasjelys i riktig etasje
+	int next_floor = q_get_next_floor(last_floor,last_dir);						//får neste etasje fra køen.
+	if(floor == next_floor){													//Sjekker om den er i etasjen den skal stoppe i.
+		if(moving == 1){														//Hvis den er i bevegelse stopper den og setter moving til 0.
+			elev_set_motor_direction(DIRN_STOP);
+			moving = 0;
+			printf("Stoppet i %d.\n", floor + 1);								//Printer ut hvilken etasje heisen har stoppet i.
+		}
+		if(moving == 0 && timer_on == 0 && door_status == 0){					//Hvis heisen står stille, timeren ikke er aktiv og døra er lukket
+			door_status = 1;													//Åpner døra og setter dørstatus til 1. Og skriver at døra er åpen
+			elev_set_door_open_lamp(1);
+			printf("Åpner dør\n");
+		}
+		if(door_status == 1){													//Hvis døra er åpen slettes alle bestillinger i gjeldene etasje og timeren startes
+			timer_start();
+			elev_set_button_lamp(BUTTON_COMMAND, floor, 0);
+			switch(floor){
+				case 0: 
+					q_clear_floor(0);
+					elev_set_button_lamp(BUTTON_CALL_UP, 0, 0);
+					break;
+				case 1: 
+					q_clear_floor(1);
+					q_clear_floor(5);
+					elev_set_button_lamp(BUTTON_CALL_UP, 1, 0);
+					elev_set_button_lamp(BUTTON_CALL_DOWN, 1, 0);
+					break;
+				case 2: 
+					q_clear_floor(2);
+					q_clear_floor(4);
+					elev_set_button_lamp(BUTTON_CALL_UP, 2, 0);
+					elev_set_button_lamp(BUTTON_CALL_DOWN, 2, 0);
+					break;
+				case 3: 
+					q_clear_floor(3);
+					elev_set_button_lamp(BUTTON_CALL_DOWN, 3, 0);
+					break;
+				default:
+					break;
+			}
+		}
 	}
-	last_floor = floor;
+	
+	if(timer_get_status() > 3.0 && timer_on == 1){								//Er timeren på og det har gått mer enn 3 sekunder vil heisen
+		elev_set_door_open_lamp(0);												//lukke døra, resette/skru av timeren og printe at døra er lukket.
+		door_status = 0;
+		timer_reset();
+		printf("Lukker dør\n");
+	}
+	last_floor = floor;															//Oppdaterer last floor til forrige etasje som ble passert
 }

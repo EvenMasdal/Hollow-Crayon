@@ -55,7 +55,7 @@ int elev_init(void) {
     // Return success.
     return 1;
 }
-
+//funksjon lagt til som skrur av alle kølys.
 void elev_clear_all_lights(void){
     elev_button_type_t button_type;
     for(button_type = BUTTON_CALL_UP; button_type <= BUTTON_COMMAND; button_type++){
