@@ -7,21 +7,22 @@
 #include <time.h>
 
 
-int moving;
-int last_floor; 
-int last_dir;
-int door_status;
-int emergency_stop;
+int moving;				//forteller om heisen beveger seg elle rikke
+int last_floor; 		//Sier hva forrige passerte etasje er(heisen stoppet ikke nødvendigvis der)
+int last_dir;			//Sier hva forrige retning på heisen var
+int door_status;		//Sier om døra er åpen
+int emergency_stop;		//Sier om heisen holder på å håndtere en nødstopp
 
+/*_____________________________________________________________________________________________________________________________*/
 
 void ctrl_init(void){
-	q_clear_queue();
-	elev_init();
-	timer_reset();
+	q_clear_queue();		//Sletter køen
+	elev_init();			//initialiserer heisen
+	timer_reset();			//resetter timeren
 	
-	int floor_sensor = elev_get_floor_sensor_signal();
+	int floor_sensor = elev_get_floor_sensor_signal(); //Skaffer etasjeinformasjon
 
-	if(floor_sensor == -1){
+	if(floor_sensor == -1){					//Kjører opp om heisen ikke er i en etasje, setter tilstanden moving til 1 og siste retning til opp
 		elev_set_motor_direction(DIRN_UP);
 		moving = 1;
 		last_dir = 1;
@@ -42,18 +43,22 @@ void ctrl_init(void){
 	}
 }
 
+/*_____________________________________________________________________________________________________________________________*/
+
+
 
 void ctrl_emergency_stop(void){
-	int stop_status = elev_get_stop_signal();
+	//int stop_status = elev_get_stop_signal();
 	
 	elev_set_motor_direction(DIRN_STOP);
 	moving = 0;
 	emergency_stop = 1;
+	timer_reset();
 
 	q_clear_queue();
 	elev_clear_all_lights();
 
-	elev_set_stop_lamp(stop_status);
+	elev_set_stop_lamp(1);
 
 	if(elev_get_floor_sensor_signal() != -1){
 		elev_set_door_open_lamp(1);
@@ -62,53 +67,41 @@ void ctrl_emergency_stop(void){
 	while(elev_get_stop_signal()){
 
 	}
-	timer_start();
+	if(elev_get_floor_sensor_signal() != -1){
+		timer_start();
+	}
 	elev_set_stop_lamp(0);
 
 }
 
 
+/*_____________________________________________________________________________________________________________________________*/
+
+
 void ctrl_requests(void){
 	elev_button_type_t button_type;
-	int posDir;
-	for(button_type = BUTTON_CALL_UP; button_type <= BUTTON_COMMAND; button_type++){
-		for(int floor = 0; floor < 4; floor++){
-			switch(button_type){
-				case BUTTON_CALL_UP:
-					if(floor == 3){ //denne knappen finnes ikke
-						break;
+
+	for(button_type = BUTTON_CALL_UP; button_type <= BUTTON_COMMAND; button_type++){		//itererer gjennom knappetypene
+		for(int floor = 0; floor < 4; floor++){												//itererer gjennom etasjene
+			if(!((button_type == BUTTON_CALL_UP && floor == 3) || (button_type == BUTTON_CALL_DOWN && floor == 0))){	//hopper over knapper som ikke finnes opp i 4. og ned i 1.
+				if(elev_get_button_signal(button_type, floor) == 1){			//Sjekker om knappen er trykket
+					elev_set_button_lamp(button_type, floor, 1);				//Skrur lyset på
+					if(button_type == BUTTON_CALL_DOWN){						//Sjekker om en av nedknappene har blitt trykket.
+						q_set_request(q_floor_and_dir_to_posDir(floor, -1));	//Setter en request i køen med riktig etasje og retning ned
+					}else if(button_type == BUTTON_CALL_UP){
+						q_set_request(q_floor_and_dir_to_posDir(floor, 1));		//Setter en request i køen med riktig etasje og retning opp
+					}else{
+						q_set_request(q_floor_and_dir_to_posDir(floor, 1));		//Setter en request i riktig etasje for både opp og ned. På den måten
+						q_set_request(q_floor_and_dir_to_posDir(floor, -1));	//Stopper heisen alltid for å slippe folk av i riktig etasje.
 					}
-					if(elev_get_button_signal(button_type, floor) == 1 /*&& !(floor == elev_get_floor_sensor_signal() && door_status ==1 )*/ ){ 		//hvis trykket. Kanskje & //get_q(floor) !=1 ?
-						posDir = q_floor_and_dir_to_posDir(floor, 1); 	//1 er retning opp
-						q_set_request(posDir);
-						elev_set_button_lamp(button_type, floor, 1);
-					}
-					break;
-				case BUTTON_CALL_DOWN:
-					if(floor == 0){	//denne knappen finnes ikke
-						break;
-					}
-					if(elev_get_button_signal(button_type, floor) == 1 /*&& !(floor == elev_get_floor_sensor_signal() && door_status ==1 )*/){ 		//hvis trykket. Kanskje & //get_q(floor) !=1 ?
-						posDir = q_floor_and_dir_to_posDir(floor, -1); 	//1 er retning opp
-						q_set_request(posDir);
-						elev_set_button_lamp(button_type, floor, 1);
-					}
-					break;
-				case BUTTON_COMMAND:
-					if(elev_get_button_signal(button_type, floor) == 1 /*&& !(floor == elev_get_floor_sensor_signal() && door_status ==1 )*/){ 		//hvis trykket. Kanskje & //get_q(floor) !=1 ?
-						posDir = q_floor_and_dir_to_posDir(floor, 1); 	//retning opp
-						q_set_request(posDir);
-						posDir = q_floor_and_dir_to_posDir(floor, -1);	//retning ned
-						q_set_request(posDir);
-						elev_set_button_lamp(button_type, floor, 1);
-					}
-					break;
-				default:
-					break;
+				}
 			}
 		}
 	}
 }
+
+
+/*_____________________________________________________________________________________________________________________________*/
 
 
 void ctrl_move(void){
@@ -183,7 +176,3 @@ void ctrl_hit_floor(int floor){
 	}
 	last_floor = floor;
 }
-
-
-
-
