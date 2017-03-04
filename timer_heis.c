@@ -10,6 +10,7 @@ void timer_start(void){
  	start = clock();
 	timer_on = 1;
 }
+
 void timer_reset(void){
 	timer_on = 0;
 }

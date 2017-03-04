@@ -10,6 +10,8 @@
 int moving;
 int last_floor; 
 int last_dir;
+int door_status;
+int emergency_stop;
 
 
 void ctrl_init(void){
@@ -41,23 +43,30 @@ void ctrl_init(void){
 }
 
 
-/*
 void ctrl_emergency_stop(void){
 	int stop_status = elev_get_stop_signal();
+	
+	elev_set_motor_direction(DIRN_STOP);
+	moving = 0;
+	emergency_stop = 1;
 
-	if(timer_get_status() == 0){
-		elev_set_motor_direction(DIRN_STOP);
-		moving = 0;
-		elev_set_stop_lamp(stop_status);
-		if(elev_get_floor_sensor_signal != -1){
-			elev_open_door();
-			timer_start(3);
-			last_floor = elev_get_floor_sensor_signal;
-		}
-		q_clear_queue();
+	q_clear_queue();
+	elev_clear_all_lights();
+
+	elev_set_stop_lamp(stop_status);
+
+	if(elev_get_floor_sensor_signal() != -1){
+		elev_set_door_open_lamp(1);
+		last_floor = elev_get_floor_sensor_signal();
 	}
+	while(elev_get_stop_signal()){
+
+	}
+	timer_start();
+	elev_set_stop_lamp(0);
+
 }
-*/
+
 
 void ctrl_requests(void){
 	elev_button_type_t button_type;
@@ -69,7 +78,7 @@ void ctrl_requests(void){
 					if(floor == 3){ //denne knappen finnes ikke
 						break;
 					}
-					if(elev_get_button_signal(button_type, floor) == 1 && floor != elev_get_floor_sensor_signal()){ 		//hvis trykket. Kanskje & //get_q(floor) !=1 ?
+					if(elev_get_button_signal(button_type, floor) == 1 /*&& !(floor == elev_get_floor_sensor_signal() && door_status ==1 )*/ ){ 		//hvis trykket. Kanskje & //get_q(floor) !=1 ?
 						posDir = q_floor_and_dir_to_posDir(floor, 1); 	//1 er retning opp
 						q_set_request(posDir);
 						elev_set_button_lamp(button_type, floor, 1);
@@ -79,14 +88,14 @@ void ctrl_requests(void){
 					if(floor == 0){	//denne knappen finnes ikke
 						break;
 					}
-					if(elev_get_button_signal(button_type, floor) == 1 && floor != elev_get_floor_sensor_signal()){ 		//hvis trykket. Kanskje & //get_q(floor) !=1 ?
+					if(elev_get_button_signal(button_type, floor) == 1 /*&& !(floor == elev_get_floor_sensor_signal() && door_status ==1 )*/){ 		//hvis trykket. Kanskje & //get_q(floor) !=1 ?
 						posDir = q_floor_and_dir_to_posDir(floor, -1); 	//1 er retning opp
 						q_set_request(posDir);
 						elev_set_button_lamp(button_type, floor, 1);
 					}
 					break;
 				case BUTTON_COMMAND:
-					if(elev_get_button_signal(button_type, floor) == 1 && floor != elev_get_floor_sensor_signal()){ 		//hvis trykket. Kanskje & //get_q(floor) !=1 ?
+					if(elev_get_button_signal(button_type, floor) == 1 /*&& !(floor == elev_get_floor_sensor_signal() && door_status ==1 )*/){ 		//hvis trykket. Kanskje & //get_q(floor) !=1 ?
 						posDir = q_floor_and_dir_to_posDir(floor, 1); 	//retning opp
 						q_set_request(posDir);
 						posDir = q_floor_and_dir_to_posDir(floor, -1);	//retning ned
@@ -106,40 +115,42 @@ void ctrl_move(void){
 	if(timer_get_status() < 3.0){
 		return;
 	}
+
 	timer_reset();
 	elev_set_door_open_lamp(0);
-	int next_dir = q_get_next_direction(last_floor, last_dir);
-	switch(next_dir){
-		case -1:
-			elev_set_motor_direction(DIRN_DOWN);	//kan elev_set_motor_dir(enum) ta inn int isteden for enum?
-			moving = 1;
-			last_dir = -1;
-			break;
-		case 0:
-			elev_set_motor_direction(DIRN_STOP); 	//Nødvendig?
-			moving = 0;
-			break;
-		case 1:
-			elev_set_motor_direction(DIRN_UP);
-			moving = 1;
-			last_dir = 1;
-			break;
-		default:
-			elev_set_motor_direction(DIRN_STOP);	//nødvendig?
-			moving = 0;
-			break;
+
+	int next_floor = q_get_next_floor(last_floor, last_dir);
+	
+	if(next_floor == -1){
+		return;
 	}
+
+	printf("Moving from %d to %d\n", last_floor, next_floor);
+	
+	if(emergency_stop == 1 && next_floor == last_floor){
+		printf("Nødstopphendelse\n");
+		elev_set_motor_direction(-last_dir);
+		emergency_stop = 0;
+	}else{
+		last_dir = q_get_next_direction(last_floor,last_dir);
+		elev_set_motor_direction(last_dir);
+	}
+	moving = 1;
 }
 
 void ctrl_hit_floor(int floor){
 
 	elev_set_floor_indicator(floor);
-	if(floor == q_get_next_floor(last_floor,last_dir) && timer_on == 0 && moving == 1){
+
+	if(floor == q_get_next_floor(last_floor,last_dir) && timer_on == 0 && door_status == 0){
 		elev_set_motor_direction(DIRN_STOP);
 		moving = 0;
-		elev_set_button_lamp(BUTTON_COMMAND, floor, 0);
+		door_status = 1;
 		timer_start();
 		elev_set_door_open_lamp(1);
+	}
+	if(floor == q_get_next_floor(last_floor,last_dir) && door_status == 1){
+		elev_set_button_lamp(BUTTON_COMMAND, floor, 0);
 		switch(floor){
 			case 0: 
 				q_clear_floor(0);
@@ -164,13 +175,13 @@ void ctrl_hit_floor(int floor){
 			default:
 				break;
 		}
-
 	}
-	if(timer_on == 0){
+	if(timer_get_status() > 3.0){
+		timer_reset();
 		elev_set_door_open_lamp(0);
+		door_status = 0;
 	}
 	last_floor = floor;
-	
 }
 
 

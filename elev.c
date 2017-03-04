@@ -56,6 +56,17 @@ int elev_init(void) {
     return 1;
 }
 
+void elev_clear_all_lights(void){
+    elev_button_type_t button_type;
+    for(button_type = BUTTON_CALL_UP; button_type <= BUTTON_COMMAND; button_type++){
+        for(int floor = 0; floor < 4; floor++){
+            if(!((button_type == BUTTON_CALL_UP && floor == 3) || (button_type == BUTTON_CALL_DOWN && floor == 0))){
+                elev_set_button_lamp(button_type, floor, 0);
+            }
+        }
+    }
+}
+
 void elev_set_motor_direction(elev_motor_direction_t dirn) {
     if (dirn == 0){
         io_write_analog(MOTOR, 0);

@@ -34,13 +34,8 @@ int q_get_next_floor(int last_floor, int last_dir){
 			return q_posDir_to_floor(queue_pos);	//returnerer neste etasje i køen
 		}
 		if (queue_pos == start_pos){					//stopper loop om den har gått en runde
-			return q_posDir_to_floor(start_pos);
+			return -1;									//q_posDir_to_floor(start_pos)?
 		}
-		
-		
-		
-
-		
 	}
 }
 /*______________________________________________________________________________________________________________________________________________________*/
@@ -49,8 +44,11 @@ int q_get_next_floor(int last_floor, int last_dir){
 int q_get_next_direction(int last_floor, int last_dir){
 
 	int next_floor = q_get_next_floor(last_floor, last_dir);
-
-	if(last_floor - next_floor < 0){			//gå opp hvis neste etasje er over
+	
+	if(next_floor == -1){
+		return 0;
+	}
+	else if(last_floor - next_floor < 0){			//gå opp hvis neste etasje er over
 		return 1;
 	}
 	else if (last_floor - next_floor > 0){		//gå ned hvis neste etasje er under
