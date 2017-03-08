@@ -8,24 +8,21 @@
 int etasje=1;
 
 int main() {
-    ctrl_init();	
-    while (1){
-        ctrl_requests();
-	
-	if(moving == 0){
-		ctrl_move();
-	}
+    ctrl_init();									//initialiserer heisen
+    while (1){										//Kjører i en evig loop
+    	if(elev_get_stop_signal() == 1){			//Kjører nødstopp om stoppknappen trykkes
+    		ctrl_emergency_stop();
+    	}
 
-	etasje = elev_get_floor_sensor_signal();		
-	if(etasje != -1 ){
-		ctrl_hit_floor(etasje);
-	}
-
-	if(elev_get_stop_signal()){
-		elev_set_motor_direction(0);
-		break;
-	}
+        ctrl_requests();							//Oppdaterer alt av kø og kølys
 	
-    }printf("\n \n");
+		if(moving == 0 && timer_on == 0){			//Ber motoren kjøre om heisen står stille og timeren er av
+			ctrl_move();
+		}
+		etasje = elev_get_floor_sensor_signal();	//Oppdaterer etasjen en gang per loop så etasje signalet ikke
+		if(etasje != -1){							//endrer seg midt i en funksjon
+			ctrl_hit_floor(etasje);					//Kjører om heisen treffer en etasje
+		}
+    }
 }
 

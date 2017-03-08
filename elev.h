@@ -17,7 +17,7 @@
 */
 int elev_init(void);
 
-
+void elev_clear_all_lights(void);
 
 /**
   Motor direction for function elev_set_motor_direction().
