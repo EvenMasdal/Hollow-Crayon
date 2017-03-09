@@ -1,14 +1,12 @@
 #include "elev.h"
 #include "ctrl_heis.h"
-#include "q_heis.h"
-#include "timer_heis.h"
 #include <stdio.h>
-#include <stdbool.h>
 
-int etasje=1;
+
 
 int main() {
     ctrl_init();									//initialiserer heisen
+    int etasje;
     while (1){										//Kjører i en evig loop
     	if(elev_get_stop_signal() == 1){			//Kjører nødstopp om stoppknappen trykkes
     		ctrl_emergency_stop();
@@ -16,7 +14,7 @@ int main() {
 
         ctrl_requests();							//Oppdaterer alt av kø og kølys
 	
-		if(moving == 0 && timer_on == 0){			//Ber motoren kjøre om heisen står stille og timeren er av
+		if(moving == 0 && door_status == 0){		//Ber motoren kjøre om heisen står stille og timeren er av
 			ctrl_move();
 		}
 		etasje = elev_get_floor_sensor_signal();	//Oppdaterer etasjen en gang per loop så etasje signalet ikke
@@ -25,4 +23,3 @@ int main() {
 		}
     }
 }
-

@@ -17,7 +17,7 @@
 */
 int elev_init(void);
 
-void elev_clear_all_lights(void);
+
 
 /**
   Motor direction for function elev_set_motor_direction().
@@ -90,7 +90,7 @@ void elev_set_floor_indicator(int floor);
 /**
   Button types for function elev_set_button_lamp() and elev_get_button().
 */
-typedef enum tag_elev_lamp_type { 
+typedef enum tag_elev_lamp_type {
     BUTTON_CALL_UP = 0,
     BUTTON_CALL_DOWN = 1,
     BUTTON_COMMAND = 2
@@ -109,6 +109,10 @@ int elev_get_button_signal(elev_button_type_t button, int floor);
 
 
 
+
+
+
+void elev_clear_floor_button_light(int floor);
 /**
   Set a button lamp.
   @param lamp Which type of lamp to set. Can be BUTTON_CALL_UP,
@@ -118,6 +122,8 @@ int elev_get_button_signal(elev_button_type_t button, int floor);
 */
 void elev_set_button_lamp(elev_button_type_t button, int floor, int value);
 
+
+void elev_clear_all_lights(void);
 
 
 #endif // #ifndef __INCLUDE_DRIVER_H__
