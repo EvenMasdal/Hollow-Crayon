@@ -8,10 +8,10 @@ Køsystemet fungerer ved å ha et array på 6 elementer
 Elementene er satt opp slik
 	["opp i 1." , "opp i 2." , "opp i 3." , "ned i 4." ,"ned i 3." , "ned i 2."]
 Og de er 0 for ingen bestilling og 1 for bestilling.
-Vi har kalt tallet som representerer hvilket element det er snakk om posDir, siden det inneholder informasjon om både retning og posisjon.
+Vi har kalt tallet som representerer hvilket element det er snakk om queuePos, siden det inneholder informasjon om både retning og posisjon.
 Ved å iterere gjennom lista kan vi enkelt finne ut hvilken bestilling heisen skal først.
 
-Vi har to funksjoner som gjør om fra etasje og retning til "posDir" og omvendt.
+Vi har to funksjoner som gjør om fra etasje og retning til "queuePos" og omvendt.
 
 
 */
@@ -24,8 +24,8 @@ int queue_arr[6] = {0};
 /*______________________________________________________________________________________________________________________________________________________*/
 
 
-void q_set_request(int posDir){											//setter en request etasje og retning i køen
-	queue_arr[posDir] = 1;
+void q_set_request(int queuePos){											//setter en request etasje og retning i køen
+	queue_arr[queuePos] = 1;
 }
 
 /*______________________________________________________________________________________________________________________________________________________*/
@@ -33,12 +33,12 @@ void q_set_request(int posDir){											//setter en request etasje og retning 
 
 int q_get_next_floor(int last_floor, int last_dir){						//returnerer etasjen til neste ettall i køen.
 
-	int start_pos = q_floor_and_dir_to_posDir(last_floor, last_dir); 	//finner gjeldene posisjon i køsystemet
+	int start_pos = q_floor_and_dir_to_queuePos(last_floor, last_dir); 	//finner gjeldene posisjon i køsystemet
 	int queue_pos = start_pos;											//lagrer startposisjonen for å ikke iterere mer enn én gang gjennom køen
 
 	while (true){														//Bruker while og ikke for siden vi itererer fra en ubestemt posisjon		
 		if (queue_arr[queue_pos] == 1){									//Ser om det er en bestilling i gjeldene plass i køen
-			return q_posDir_to_floor(queue_pos);						//returnerer neste etasje i køen
+			return q_queuePos_to_floor(queue_pos);						//returnerer neste etasje i køen
 		}
 		queue_pos++;													//går til neste posisjon i køen
 		if (queue_pos == 6){											//begynner fra starten av køen hvis den når slutten 
@@ -94,11 +94,11 @@ void q_clear_queue(void){												//Itererer gjennom kø-arrayet og setter al
 /*______________________________________________________________________________________________________________________________________________________*/
 
 
-int q_floor_and_dir_to_posDir(int floor, int dir){						//returnerer posDir som samsvarer med etasje og retning. 
+int q_floor_and_dir_to_queuePos(int floor, int dir){						//returnerer queuePos som samsvarer med etasje og retning. 
 	if (dir != 1 && dir !=-1){											//Returnerer -1 dersom dir != -1 eller 1.
 		return -1;
 	}
-	switch(floor){ 														//konverterer retning og etasje til posDir
+	switch(floor){ 														//konverterer retning og etasje til queuePos
 		
 		case 0:
 			return 0;
@@ -128,8 +128,8 @@ int q_floor_and_dir_to_posDir(int floor, int dir){						//returnerer posDir som 
 
 /*______________________________________________________________________________________________________________________________________________________*/
 
-int q_posDir_to_floor(int posDir){										//Får in posDir mellom 0 og 5 og returnerer en etasje mellom 0 og 3.
-	switch(posDir){
+int q_queuePos_to_floor(int queuePos){										//Får in queuePos mellom 0 og 5 og returnerer en etasje mellom 0 og 3.
+	switch(queuePos){
 		case 0:
 			return 0;
 		case 1:
