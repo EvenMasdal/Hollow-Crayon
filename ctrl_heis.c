@@ -61,6 +61,7 @@ void ctrl_emergency_stop(void){
 
 	if(elev_get_floor_sensor_signal() != -1){									//Åpner døra hvis heisen stoppet i en etasje
 		elev_set_door_open_lamp(1);
+		door_status = 1;
 		last_floor = elev_get_floor_sensor_signal();							//Oppdaterer last floor
 	}
 	if(elev_get_floor_sensor_signal() == -1 && emergency_stop_count == 1){
