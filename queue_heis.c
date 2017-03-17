@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 
-int queue_array_size = 6 ;?
+int queue_array_size = 6;
 
 int queue_arr[6] = {0};
 
@@ -10,7 +10,6 @@ int queue_arr[6] = {0};
 void queue_set_request(int queuePos){
 	queue_arr[queuePos] = 1;
 }
-
 
 
 int queue_get_next_floor(int last_floor, int last_dir){	
