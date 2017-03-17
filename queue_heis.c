@@ -6,7 +6,6 @@ int queue_array_size = 6;
 
 int queue_arr[6] = {0};
 
-
 void queue_set_request(int queuePos){
 	queue_arr[queuePos] = 1;
 }
@@ -19,14 +18,14 @@ int queue_get_next_floor(int last_floor, int last_dir){
 
 	while (1){		
 		if (queue_arr[queue_pos] == 1){
-			return queue_queuePos_to_floor(queue_pos);
+			return queue_queuePos_to_floor(queue_pos);	//returnerer etasjen til første bestilling.
 		}
 		queue_pos++;
 		if (queue_pos == 6){
 			queue_pos = 0;
 		}
 		if (queue_pos == start_pos){
-			return -1;				//returnerer 1 hvis køen er tom.									
+			return -1;									//returnerer -1 hvis køen er tom.									
 		}
 	}
 }
@@ -39,10 +38,10 @@ int queue_get_next_direction(int last_floor, int last_dir){
 	if(next_floor == -1){					//Dette skjer om køen er tom
 		return 0;
 	}
-	else if(last_floor - next_floor < 0){
+	else if(last_floor < next_floor){
 		return 1;
 	}
-	else if (last_floor - next_floor > 0){
+	else if (last_floor > next_floor){
 		return -1;
 	}
 	else {
@@ -108,7 +107,6 @@ int queue_floor_and_dir_to_queuePos(int floor, int dir){
 			return -1;
 	}
 }
-
 
 
 int queue_queuePos_to_floor(int queuePos){

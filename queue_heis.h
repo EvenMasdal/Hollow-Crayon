@@ -10,6 +10,6 @@ void queue_clear_floor(int floor);
 
 void queue_clear_queue(void);
 
-int queue_floor_and_dir_to_queuePos(int floor, int dir);
+int queue_floor_and_dir_to_queuePos(int floor, int dir);//gjør om fra etasje og retning til queuePos.
 
-int queue_queuePos_to_floor(int queuePos);
+int queue_queuePos_to_floor(int queuePos);				//gjør om fra queuePos til etasje.

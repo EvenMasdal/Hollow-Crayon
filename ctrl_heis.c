@@ -28,7 +28,7 @@ void ctrl_init(void){
 		last_dir = 1;
 	}
 
-	while(1){
+	while(1){					//Kjører nedover til den treffer en etasje
 		floor_sensor = elev_get_floor_sensor_signal();
 		if(floor_sensor != -1){
 			elev_set_floor_indicator(floor_sensor);
@@ -53,7 +53,7 @@ void ctrl_emergency_stop(void){
 	printf("Nødstopp\n");
 
 	queue_clear_queue();
-	elev_clear_all_lights();						//Denne lagde vi selv og la til i elev
+	elev_clear_all_lights();				//Denne lagde vi selv og la til i elev
 
 	elev_set_stop_lamp(1);
 
@@ -62,10 +62,11 @@ void ctrl_emergency_stop(void){
 		door_status = 1;
 		last_floor = elev_get_floor_sensor_signal();
 	}
-	if(elev_get_floor_sensor_signal() == -1 && emergency_stop_count == 1){
+
+	if(elev_get_floor_sensor_signal() == -1 && emergency_stop_count == 1){	//kjøres på første stopp mellom to etasjer.
 		emergency_stop_dir = last_dir;
 	}
-	while(elev_get_stop_signal()){
+	while(elev_get_stop_signal()){			//Holder stoppknapp. Siden ingenting skal skje mens knappen holdes er det enklest å gjøre det slik. 
 
 	}
 	if(elev_get_floor_sensor_signal() != -1){
@@ -80,10 +81,12 @@ void ctrl_update_requests(void){
 
 	for(button_type = BUTTON_CALL_UP; button_type <= BUTTON_COMMAND; button_type++){
 		for(int floor = 0; floor < 4; floor++){
-			if(!((button_type == BUTTON_CALL_UP && floor == 3) || (button_type == BUTTON_CALL_DOWN && floor == 0))){ //ignorerer knapper som ikke finnes
+			if(!((button_type == BUTTON_CALL_UP && floor == 3) || (button_type == BUTTON_CALL_DOWN && floor == 0))){ //ignorerer knapper som ikke finnes(4. opp og 1. ned)
 				if(elev_get_button_signal(button_type, floor) == 1){
 					elev_set_button_lamp(button_type, floor, 1);
+
 					//Å trykke en etasjeknapp er det samme som å trykke begge bestillingsknappene i en etasje.
+					
 					if(button_type == BUTTON_CALL_DOWN || button_type == BUTTON_COMMAND){
 						queue_set_request(queue_floor_and_dir_to_queuePos(floor, -1));
 					}
@@ -139,8 +142,8 @@ void ctrl_hit_floor(int floor){
 		}
 	}
 	if(door_status == 1){														//Hvis døra er åpen i en etasje slettes alle bestillinger i etasjen.
-		if(floor == next_floor){
-			timer_start();
+		if(floor == next_floor){												//Timeren bare når man er i "neste etasje". I neste loop er bestillingen slettet
+			timer_start();														//så timeren startes ikke på nytt. Da varer timeren i 3 sek fra siste knappetrykk.
 		}
 		queue_clear_floor(floor);
 		elev_clear_floor_button_light(floor);
