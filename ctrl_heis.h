@@ -9,7 +9,7 @@ void ctrl_init(void);
 
 void ctrl_emergency_stop(void);
 
-void ctrl_requests(void);
+void ctrl_update_requests(void);
 
 void ctrl_move(void);
 
